@@ -681,7 +681,7 @@ class assign_course_index_summary implements renderable {
 class assign_files implements renderable {
     /** @var context $context */
     public $context;
-    /** @var string $context */
+    /** @var array $dir */
     public $dir;
     /** @var MoodleQuickForm $portfolioform */
     public $portfolioform;
@@ -689,6 +689,8 @@ class assign_files implements renderable {
     public $cm;
     /** @var stdClass $course */
     public $course;
+    /** @var \core\output\file_tree $filetree */
+    public $filetree;
 
     /**
      * The constructor
@@ -700,7 +702,7 @@ class assign_files implements renderable {
      * @param stdClass $course
      * @param stdClass $cm
      */
-    public function __construct(context $context, $sid, $filearea, $component, $course = null, $cm = null) {
+    public function __construct(context $context, $sid, $filearea, $component, $course = null, $cm = null, array $fileoptions = []) {
         global $CFG;
         if (empty($course) || empty($cm)) {
             list($context, $course, $cm) = get_context_info_array($context->id);
@@ -711,6 +713,13 @@ class assign_files implements renderable {
         $this->course = $course;
         $fs = get_file_storage();
         $this->dir = $fs->get_area_tree($this->context->id, $component, $filearea, $sid);
+
+        if (empty($fileoptions)) {
+            $fileoptions = [
+                'modifiedtime' => true,
+                'plagiarismlinks' => !empty($CFG->enableplagiarism),
+            ];
+        }
 
         $files = $fs->get_area_files($this->context->id,
                                      $component,
@@ -733,8 +742,12 @@ class assign_files implements renderable {
                                               'mod_assign');
                 $button->reset_formats();
                 $this->portfolioform = $button->to_html(PORTFOLIO_ADD_TEXT_LINK);
+
+                $fileoptions['portfoliobutton'] = true;
             }
         }
+
+        $this->filetree = new \core\output\file_tree($this->dir, 'assign tree', $cm->id, $fileoptions);
     }
 
     /**
