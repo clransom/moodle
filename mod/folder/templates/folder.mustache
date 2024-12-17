@@ -81,22 +81,5 @@
             </div>
         </div>
     {{/hasbuttons}}
-    <div class="box generalbox pt-0 pb-3 foldertree">
-        <div id="{{{id}}}" class="filemanager">
-            {{#dir}}
-                <ul>
-                    <li>
-                        {{>mod_folder/tree}}
-                    </li>
-                </ul>
-            {{/dir}}
-        </div>
-    </div>
+    {{>core/file_tree}}
 </div>
-
-{{#js}}
-    // Init tree JS.
-    require(['mod_folder/folder'], function(Folder) {
-        Folder.initTree('{{{id}}}', '{{{showexpanded}}}');
-    });
-{{/js}}
