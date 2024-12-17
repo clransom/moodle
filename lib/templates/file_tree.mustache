@@ -1,0 +1,75 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/file_tree
+
+    Template for displaying a file tree.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Example context (json):
+    {
+        "id": file_tree1,
+        "showexpanded": true,
+        "dir": [
+            {
+                "name": "Folder",
+                "icon": "<img src='icon' alt='alt'>",
+                "hassubdirs": true,
+                "subdirs": [
+                    {
+                        "name": "File1",
+                        "icon": "<img src='icon' alt='alt'>",
+                        "hassubdirs": false,
+                        "subdirs": null
+                     }
+                ]
+            },
+            {
+                "name": "File2",
+                "icon": "<img src='icon' alt='alt'>",
+                "hassubdirs": false,
+                "subdirs": null
+            }
+        ]
+    }
+}}
+
+<!--<div class="flex-fill description-inner text-break">-->
+    <div class="box generalbox pt-0 pb-3 foldertree">
+        <div id="{{{id}}}" class="filemanager">
+            {{#dir}}
+                <ul>
+                    <li>
+                        {{>core/file_subtree}}
+                    </li>
+                </ul>
+            {{/dir}}
+        </div>
+    </div>
+<!--</div>-->
+
+{{#js}}
+    // Init tree JS.
+    require(['core/file_tree'], function(Folder) {
+        Folder.initTree('{{{id}}}', '{{{showexpanded}}}');
+    });
+{{/js}}
