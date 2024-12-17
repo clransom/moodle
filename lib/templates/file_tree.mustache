@@ -53,23 +53,21 @@
     }
 }}
 
-<!--<div class="flex-fill description-inner text-break">-->
-    <div class="box generalbox pt-0 pb-3 foldertree">
-        <div id="{{{id}}}" class="filemanager">
-            {{#dir}}
-                <ul>
-                    <li>
-                        {{>core/file_subtree}}
-                    </li>
-                </ul>
-            {{/dir}}
-        </div>
+<div class="box generalbox pt-0 pb-3 foldertree">
+    <div id="{{uniqid}}-filetree" class="filemanager">
+        {{#dir}}
+            <ul>
+                <li>
+                    {{>core/file_subtree}}
+                </li>
+            </ul>
+        {{/dir}}
     </div>
-<!--</div>-->
+</div>
 
 {{#js}}
     // Init tree JS.
     require(['core/file_tree'], function(Folder) {
-        Folder.initTree('{{{id}}}', '{{{showexpanded}}}');
+        Folder.initTree('{{uniqid}}-filetree', '{{{showexpanded}}}');
     });
 {{/js}}
