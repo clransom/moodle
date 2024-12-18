@@ -25,18 +25,33 @@ namespace core\output;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class file_display implements renderable, templatable {
+    /** @var \stored_file File to display */
     private \stored_file $file;
+
+    /** @var int Course module ID */
+    private int $cmid;
 
     /** @var bool Whether to force download of files, rather than showing them in the browser */
     private $forcedownload = false;
 
+    /** @var bool Whether to add a portfolio button */
+    private $addportfoliobutton = false;
+
+    /** @var bool Whether to add plagiarism links to the file */
+    private $addplagiarismlinks = false;
+
+    /** @var bool Whether to include the modified time of the file */
+    private $includemodifiedtime = false;
+
     /**
      * Constructor.
      *
-     * @param \stored_file $file file
+     * @param \stored_file $file File
+     * @param int $cmid Course module ID
      */
-    public function __construct(\stored_file $file) {
+    public function __construct(\stored_file $file, int $cmid) {
         $this->file = $file;
+        $this->cmid = $cmid;
     }
 
     /**
@@ -47,6 +62,36 @@ class file_display implements renderable, templatable {
      */
     public function force_download(bool $value): void {
         $this->forcedownload = $value;
+    }
+
+    /**
+     * Set whether to add a portfolio button.
+     *
+     * @param bool $value
+     * @return void
+     */
+    public function add_portfolio_button(bool $value): void {
+        $this->addportfoliobutton = $value;
+    }
+
+    /**
+     * Set whether to include plagiarism links.
+     *
+     * @param bool $value
+     * @return void
+     */
+    public function add_plagiarism_links(bool $value): void {
+        $this->addplagiarismlinks = $value;
+    }
+
+    /**
+     * Set whether to include modified time.
+     *
+     * @param bool $value
+     * @return void
+     */
+    public function include_modified_time(bool $value): void {
+        $this->includemodifiedtime = $value;
     }
 
     public function export_for_template(renderer_base $output) {
@@ -66,19 +111,73 @@ class file_display implements renderable, templatable {
             $url->param('forcedownload', 1);
         }
 
-        return [
+        $data = [
             'name' => $filenamedisplay,
             'icon' => $image,
             'url' => $url
         ];
+
+        if ($this->addportfoliobutton) {
+            $data['portfoliobutton'] = $this->get_portfolio_button();
+        }
+
+        if ($this->addplagiarismlinks) {
+            $data['plagiarismlinks'] = $this->get_plagiarism_links();
+        }
+
+        if($this->includemodifiedtime) {
+            $data['modifiedtime'] = userdate($this->file->get_timemodified(), get_string('strftimedatetime', 'langconfig'));
+        }
+
+        return $data;
     }
 
+    // todo: think of better names for these functions, so they are more easily distinguished from the setters above
+
+    /**
+     * Get the portfolio button content for this file.
+     *
+     * @return string portfolio button HTML
+     */
+    protected function get_portfolio_button(): string {
+        global $CFG;
+        if (empty($CFG->enableportfolios)) {
+            return '';
+        }
+
+        require_once($CFG->libdir . '/portfoliolib.php');
+
+        $button = new \portfolio_add_button();
+        $portfolioparams = [
+            'cmid' => $this->cmid,
+            'fileid' => $this->file->get_id(),
+        ];
+        $button->set_callback_options('assign_portfolio_caller', $portfolioparams, 'mod_assign');
+        $button->set_format_by_file($this->file);
+
+        return (string) $button->to_html(PORTFOLIO_ADD_ICON_LINK);
+    }
+
+    /**
+     * Get the plagiarism links for this file.
+     *
+     * @return string plagiarism links HTML
+     */
+    protected function get_plagiarism_links(): string {
+        global $CFG;
+        if ($CFG->enableplagiarism) {
+            require_once($CFG->libdir.'/plagiarismlib.php');
+            [$course, $cm] = get_course_and_cm_from_cmid($this->cmid);
+            $plagiarismlinks = plagiarism_get_links([
+                'userid' => $this->file->get_userid(),
+                'file' => $this->file,
+                'cmid' => $this->cmid,
+                'course' => $course]);
+        } else {
+            $plagiarismlinks = '';
+        }
+
+        return $plagiarismlinks;
+    }
 
 }
-
-//todo: is this necessary?
-
-// Alias this class to the old name.
-// This file will be autoloaded by the legacyclasses autoload system.
-// In future all uses of this class will be corrected and the legacy references will be removed.
-class_alias(file_display::class, \file_display::class);

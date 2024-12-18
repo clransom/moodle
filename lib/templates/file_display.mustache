@@ -39,10 +39,17 @@
     </span>
     <span class="fp-filename">
         {{#url}}
-            <a href="{{url}}">{{{name}}}</a>
+            <a href="{{url}}" target="_blank">{{{name}}}</a>
         {{/url}}
         {{^url}}
             {{{name}}}
         {{/url}}
     </span>
+    {{{plagiarismlinks}}}
+    {{{portfoliobutton}}}
+    {{#modifiedtime}}
+        <span class="filedisplay-modifiedtime">
+            {{modifiedtime}}
+        </span>
+    {{/modifiedtime}}
 </div>

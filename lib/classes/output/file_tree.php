@@ -25,8 +25,8 @@ namespace core\output;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class file_tree implements renderable, templatable {
-    /** @var string The id for this file tree */
-    private $treeid;
+    /** @var int Course module ID */
+    private int $cmid;
 
     /** @var array The directory to create a file tree from */
     private $directory;
@@ -37,20 +37,29 @@ class file_tree implements renderable, templatable {
     /** @var bool Whether to force download of files, rather than showing them in the browser */
     private $forcedownload = false;
 
+    /** @var bool Whether to add a portfolio button to the files */
+    private $addportfoliobutton = false;
+
+    /** @var bool Whether to add plagiarism links to the files */
+    private $addplagiarismlinks = false;
+
+    /** @var bool Whether to include the modified time of the files */
+    private $includemodifiedtime = false;
+
     //Todo: can specify more than one file area?
 
     /**
      * Constructor.
      *
-     * @param int $contextid context ID
+     * @param int $cmid course module ID
      * @param string $component component
      * @param string $filearea file area
+     * @param int $itemid item ID
      */
-    public function __construct(string $treeid, int $contextid, string $component, string $filearea) {
-        $this->treeid = $treeid;
-
+    public function __construct(int $cmid, string $component, string $filearea, int $itemid = 0) {
+        $this->cmid = $cmid;
         $fs = get_file_storage();
-        $this->directory = $fs->get_area_tree($contextid, $component, $filearea, 0);
+        $this->directory = $fs->get_area_tree(\context_module::instance($cmid)->id, $component, $filearea, $itemid);
     }
 
     /**
@@ -73,9 +82,38 @@ class file_tree implements renderable, templatable {
         $this->forcedownload = $value;
     }
 
+    /**
+     * Set whether to add a portfolio button.
+     *
+     * @param bool $value
+     * @return void
+     */
+    public function add_portfolio_button(bool $value): void {
+        $this->addportfoliobutton = $value;
+    }
+
+    /**
+     * Set whether to include plagiarism links.
+     *
+     * @param bool $value
+     * @return void
+     */
+    public function add_plagiarism_links(bool $value): void {
+        $this->addplagiarismlinks = $value;
+    }
+
+    /**
+     * Set whether to include modified time.
+     *
+     * @param bool $value
+     * @return void
+     */
+    public function include_modified_time(bool $value): void {
+        $this->includemodifiedtime = $value;
+    }
+
     public function export_for_template(renderer_base $output) {
         return [
-            'id' => $this->treeid,
             'showexpanded' => $this->showexpanded,
             'dir' => $this->get_tree_elements($output, ['files' => [], 'subdirs' => [$this->directory]]),
         ];
@@ -118,18 +156,14 @@ class file_tree implements renderable, templatable {
                 'subdirs' => null,
                 'hassubdirs' => false,
             ];
-            $filedisplay = new file_display($file);
+            $filedisplay = new file_display($file, $this->cmid);
             $filedisplay->force_download($this->forcedownload);
+            $filedisplay->add_portfolio_button($this->addportfoliobutton);
+            $filedisplay->add_plagiarism_links($this->addplagiarismlinks);
+            $filedisplay->include_modified_time($this->includemodifiedtime);
             $elements[] = array_merge($data, $filedisplay->export_for_template($output));
         }
 
         return $elements;
     }
 }
-
-//todo: is this necessary?
-
-// Alias this class to the old name.
-// This file will be autoloaded by the legacyclasses autoload system.
-// In future all uses of this class will be corrected and the legacy references will be removed.
-class_alias(file_tree::class, \file_tree::class);
