@@ -77,11 +77,11 @@ class mod_folder_renderer extends plugin_renderer_base {
             $data['hasbuttons'] = true;
         }
 
-        $foldertree = new \core\output\file_tree('folder_tree'. ($treecounter++), context_module::instance($cm->id)->id, 'mod_folder', 'content');
+        $foldertree = new \core\output\file_tree($cm->id, 'mod_folder', 'content');
         // todo: figure out how to make this happen properly
         if ($folder->display == FOLDER_DISPLAY_INLINE) {
             // Display module name as the name of the root directory.
-            $foldertree->set_root_name($cm->get_formatted_name(array('escape' => false)));
+            $foldertree->set_root_name($cm->get_formatted_name(['escape' => false]));
         }
 
         $foldertree->show_expanded(!empty($folder->showexpanded));
