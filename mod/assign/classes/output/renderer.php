@@ -68,12 +68,10 @@ class renderer extends \plugin_renderer_base {
      * @return string
      */
     public function render_assign_files(\assign_files $tree) {
-        $this->htmlid = \html_writer::random_id('assign_files_tree');
-        $this->page->requires->js_init_call('M.mod_assign.init_tree', array(true, $this->htmlid));
-        $html = '<div id="'.$this->htmlid.'">';
-        $html .= $this->htmllize_tree($tree, $tree->dir);
-        $html .= '</div>';
+        $data = $tree->filetree->export_for_template($this->output);
+        $html = $this->render_from_template('core/file_tree', $data);
 
+        // todo: what is this?
         if ($tree->portfolioform) {
             $html .= $tree->portfolioform;
         }

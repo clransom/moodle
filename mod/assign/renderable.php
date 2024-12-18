@@ -689,6 +689,8 @@ class assign_files implements renderable {
     public $cm;
     /** @var stdClass $course */
     public $course;
+    /** @var \core\output\file_tree $filetree */
+    public $filetree;
 
     /**
      * The constructor
@@ -712,6 +714,12 @@ class assign_files implements renderable {
         $fs = get_file_storage();
         $this->dir = $fs->get_area_tree($this->context->id, $component, $filearea, $sid);
 
+        $this->filetree = new \core\output\file_tree($cm->id, $component, $filearea, $sid);
+        if ($CFG->enableplagiarism) {
+            $this->filetree->add_plagiarism_links(true);
+        }
+        $this->filetree->include_modified_time(true);
+
         $files = $fs->get_area_files($this->context->id,
                                      $component,
                                      $filearea,
@@ -733,6 +741,8 @@ class assign_files implements renderable {
                                               'mod_assign');
                 $button->reset_formats();
                 $this->portfolioform = $button->to_html(PORTFOLIO_ADD_TEXT_LINK);
+
+                $this->filetree->add_portfolio_button(true);
             }
         }
     }
