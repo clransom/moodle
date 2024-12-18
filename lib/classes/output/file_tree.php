@@ -34,6 +34,9 @@ class file_tree implements renderable, templatable {
     /** @var bool Whether to display sub folders expanded */
     private $showexpanded = true;
 
+    /** @var bool Whether to display the root directory */
+    private $displayroot = true;
+
     /** @var bool Whether to force download of files, rather than showing them in the browser */
     private $forcedownload = false;
 
@@ -70,6 +73,16 @@ class file_tree implements renderable, templatable {
      */
     public function show_expanded(bool $value): void {
         $this->showexpanded = $value;
+    }
+
+    /**
+     * Set whether to display the root directory.
+     *
+     * @param bool $value
+     * @return void
+     */
+    public function display_root(bool $value): void {
+        $this->displayroot = $value;
     }
 
     /**
@@ -115,6 +128,7 @@ class file_tree implements renderable, templatable {
     public function export_for_template(renderer_base $output) {
         return [
             'showexpanded' => $this->showexpanded,
+            'displayroot' => $this->displayroot,
             'dir' => $this->get_tree_elements($output, ['files' => [], 'subdirs' => [$this->directory]]),
         ];
     }

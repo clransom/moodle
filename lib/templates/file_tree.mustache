@@ -56,11 +56,16 @@
 <div class="box generalbox pt-0 pb-3 foldertree">
     <div id="{{uniqid}}-filetree" class="filemanager">
         {{#dir}}
-            <ul>
-                <li>
-                    {{>core/file_subtree}}
-                </li>
-            </ul>
+            {{#displayroot}}
+                <ul>
+                    <li>
+                        {{>core/file_subtree}}
+                    </li>
+                </ul>
+            {{/displayroot}}
+            {{^displayroot}}
+                {{>core/file_subtree}}
+            {{/displayroot}}
         {{/dir}}
     </div>
 </div>

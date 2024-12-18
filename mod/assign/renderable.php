@@ -719,6 +719,7 @@ class assign_files implements renderable {
             $this->filetree->add_plagiarism_links(true);
         }
         $this->filetree->include_modified_time(true);
+        $this->filetree->display_root(false);
 
         $files = $fs->get_area_files($this->context->id,
                                      $component,
