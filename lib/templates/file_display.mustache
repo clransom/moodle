@@ -33,20 +33,23 @@
     }
 }}
 
-<div class="fp-filename-icon">
-    <span class="fp-icon">
-        {{{icon}}}
-    </span>
-    <span class="fp-filename">
-        {{#url}}
-            <a href="{{url}}" target="_blank">{{{name}}}</a>
-        {{/url}}
-        {{^url}}
-            {{{name}}}
-        {{/url}}
-    </span>
-    {{{plagiarismlinks}}}
-    {{{portfoliobutton}}}
+<div class="core_file_display">
+    <div class="fp-filename-icon">
+        <span class="fp-icon">
+            {{{icon}}}
+        </span>
+        <span class="fp-filename">
+            {{#url}}
+<!--                todo: probably need a setting for open in new tab -->
+                <a href="{{url}}" target="_blank">{{{name}}}</a>
+            {{/url}}
+            {{^url}}
+                {{{name}}}
+            {{/url}}
+        </span>
+        {{{plagiarismlinks}}}
+        {{{portfoliobutton}}}
+    </div>
     {{#modifiedtime}}
         <span class="filedisplay-modifiedtime">
             {{modifiedtime}}
