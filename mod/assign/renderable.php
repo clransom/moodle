@@ -702,7 +702,7 @@ class assign_files implements renderable {
      * @param stdClass $course
      * @param stdClass $cm
      */
-    public function __construct(context $context, $sid, $filearea, $component, $course = null, $cm = null) {
+    public function __construct(context $context, $sid, $filearea, $component, $course = null, $cm = null, array $fileoptions = []) {
         global $CFG;
         if (empty($course) || empty($cm)) {
             list($context, $course, $cm) = get_context_info_array($context->id);
@@ -714,12 +714,12 @@ class assign_files implements renderable {
         $fs = get_file_storage();
         $this->dir = $fs->get_area_tree($this->context->id, $component, $filearea, $sid);
 
-        $this->filetree = new \core\output\file_tree($cm->id, $component, $filearea, $sid);
-        if ($CFG->enableplagiarism) {
-            $this->filetree->add_plagiarism_links(true);
+        if (empty($fileoptions)) {
+            $fileoptions = [
+                'modifiedtime' => true,
+                'plagiarismlinks' => !empty($CFG->enableplagiarism),
+            ];
         }
-        $this->filetree->include_modified_time(true);
-        $this->filetree->display_root(false);
 
         $files = $fs->get_area_files($this->context->id,
                                      $component,
@@ -743,9 +743,12 @@ class assign_files implements renderable {
                 $button->reset_formats();
                 $this->portfolioform = $button->to_html(PORTFOLIO_ADD_TEXT_LINK);
 
-                $this->filetree->add_portfolio_button(true);
+                $fileoptions['portfoliobutton'] = true;
             }
         }
+
+        $this->filetree = new \core\output\file_tree($cm->id, $component, $filearea, $sid, $fileoptions);
+        $this->filetree->display_root(false);
     }
 
     /**

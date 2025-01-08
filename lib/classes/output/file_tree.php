@@ -37,17 +37,8 @@ class file_tree implements renderable, templatable {
     /** @var bool Whether to display the root directory */
     private $displayroot = true;
 
-    /** @var bool Whether to force download of files, rather than showing them in the browser */
-    private $forcedownload = false;
-
-    /** @var bool Whether to add a portfolio button to the files */
-    private $addportfoliobutton = false;
-
-    /** @var bool Whether to add plagiarism links to the files */
-    private $addplagiarismlinks = false;
-
-    /** @var bool Whether to include the modified time of the files */
-    private $includemodifiedtime = false;
+    /** @var array File display options */
+    private array $options;
 
     //Todo: can specify more than one file area?
 
@@ -58,9 +49,12 @@ class file_tree implements renderable, templatable {
      * @param string $component component
      * @param string $filearea file area
      * @param int $itemid item ID
+     * @param array $options File display options
+     *
      */
-    public function __construct(int $cmid, string $component, string $filearea, int $itemid = 0) {
+    public function __construct(int $cmid, string $component, string $filearea, int $itemid = 0, array $options = []) {
         $this->cmid = $cmid;
+        $this->options = $options;
         $fs = get_file_storage();
         $this->directory = $fs->get_area_tree(\context_module::instance($cmid)->id, $component, $filearea, $itemid);
     }
@@ -83,46 +77,6 @@ class file_tree implements renderable, templatable {
      */
     public function display_root(bool $value): void {
         $this->displayroot = $value;
-    }
-
-    /**
-     * Set whether to force download of files, rather than showing them in the browser.
-     *
-     * @param bool $value
-     * @return void
-     */
-    public function force_download(bool $value): void {
-        $this->forcedownload = $value;
-    }
-
-    /**
-     * Set whether to add a portfolio button.
-     *
-     * @param bool $value
-     * @return void
-     */
-    public function add_portfolio_button(bool $value): void {
-        $this->addportfoliobutton = $value;
-    }
-
-    /**
-     * Set whether to include plagiarism links.
-     *
-     * @param bool $value
-     * @return void
-     */
-    public function add_plagiarism_links(bool $value): void {
-        $this->addplagiarismlinks = $value;
-    }
-
-    /**
-     * Set whether to include modified time.
-     *
-     * @param bool $value
-     * @return void
-     */
-    public function include_modified_time(bool $value): void {
-        $this->includemodifiedtime = $value;
     }
 
     public function export_for_template(renderer_base $output) {
@@ -170,11 +124,7 @@ class file_tree implements renderable, templatable {
                 'subdirs' => null,
                 'hassubdirs' => false,
             ];
-            $filedisplay = new file_display($file, $this->cmid);
-            $filedisplay->force_download($this->forcedownload);
-            $filedisplay->add_portfolio_button($this->addportfoliobutton);
-            $filedisplay->add_plagiarism_links($this->addplagiarismlinks);
-            $filedisplay->include_modified_time($this->includemodifiedtime);
+            $filedisplay = new file_display($file, $this->cmid, $this->options);
             $elements[] = array_merge($data, $filedisplay->export_for_template($output));
         }
 

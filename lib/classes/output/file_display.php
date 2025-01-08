@@ -31,67 +31,20 @@ class file_display implements renderable, templatable {
     /** @var int Course module ID */
     private int $cmid;
 
-    /** @var bool Whether to force download of files, rather than showing them in the browser */
-    private $forcedownload = false;
-
-    /** @var bool Whether to add a portfolio button */
-    private $addportfoliobutton = false;
-
-    /** @var bool Whether to add plagiarism links to the file */
-    private $addplagiarismlinks = false;
-
-    /** @var bool Whether to include the modified time of the file */
-    private $includemodifiedtime = false;
+    /** @var array File display options */
+    private array $options;
 
     /**
      * Constructor.
      *
      * @param \stored_file $file File
      * @param int $cmid Course module ID
+     * @param array $options File display options
      */
-    public function __construct(\stored_file $file, int $cmid) {
+    public function __construct(\stored_file $file, int $cmid, array $options) {
         $this->file = $file;
         $this->cmid = $cmid;
-    }
-
-    /**
-     * Set whether to force download of files, rather than showing them in the browser.
-     *
-     * @param bool $value
-     * @return void
-     */
-    public function force_download(bool $value): void {
-        $this->forcedownload = $value;
-    }
-
-    /**
-     * Set whether to add a portfolio button.
-     *
-     * @param bool $value
-     * @return void
-     */
-    public function add_portfolio_button(bool $value): void {
-        $this->addportfoliobutton = $value;
-    }
-
-    /**
-     * Set whether to include plagiarism links.
-     *
-     * @param bool $value
-     * @return void
-     */
-    public function add_plagiarism_links(bool $value): void {
-        $this->addplagiarismlinks = $value;
-    }
-
-    /**
-     * Set whether to include modified time.
-     *
-     * @param bool $value
-     * @return void
-     */
-    public function include_modified_time(bool $value): void {
-        $this->includemodifiedtime = $value;
+        $this->options = $options;
     }
 
     public function export_for_template(renderer_base $output) {
@@ -107,7 +60,7 @@ class file_display implements renderable, templatable {
             $image = $output->pix_icon(file_file_icon($this->file), $filenamedisplay, 'moodle');
         }
 
-        if ($this->forcedownload) {
+        if (!empty($this->options['forcedownload'])) {
             $url->param('forcedownload', 1);
         }
 
@@ -117,22 +70,20 @@ class file_display implements renderable, templatable {
             'url' => $url
         ];
 
-        if ($this->addportfoliobutton) {
+        if (!empty($this->options['portfoliobutton'])) {
             $data['portfoliobutton'] = $this->get_portfolio_button();
         }
 
-        if ($this->addplagiarismlinks) {
+        if (!empty($this->options['plagiarismlinks'])) {
             $data['plagiarismlinks'] = $this->get_plagiarism_links();
         }
 
-        if($this->includemodifiedtime) {
+        if (!empty($this->options['modifiedtime'])) {
             $data['modifiedtime'] = userdate($this->file->get_timemodified(), get_string('strftimedatetime', 'langconfig'));
         }
 
         return $data;
     }
-
-    // todo: think of better names for these functions, so they are more easily distinguished from the setters above
 
     /**
      * Get the portfolio button content for this file.
