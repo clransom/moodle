@@ -71,7 +71,7 @@ class renderer extends \plugin_renderer_base {
         $data = $tree->filetree->export_for_template($this->output);
         $html = $this->render_from_template('core/file_tree', $data);
 
-        // todo: what is this?
+        // todo: what is this? Does it look ok with the new changes?
         if ($tree->portfolioform) {
             $html .= $tree->portfolioform;
         }
