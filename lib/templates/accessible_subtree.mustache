@@ -30,7 +30,7 @@
         "name": "Folder",
         "icon": "<img src='icon' alt='alt'>",
         "hassubdirs": true,
-        "subdirs": [
+        "children": [
             {
                 "name": "File1",
                 "icon": "<img src='icon' alt='alt'>",
@@ -40,29 +40,23 @@
         ]
     }
 }}
-
-{{$treeitem}}
+{{#isdir}}
+<ul role="group" aria-hidden="true">
     <li role="treeitem" aria-expanded="false">
-        <a href="{{url}}" tabindex="-1">{{{icon}}}{{{name}}}</a>
-    </li>
-{{/treeitem}}
-{{#hassubdirs}}
-    <ul role="group" aria-hidden="true">
-        <li role="treeitem" aria-expanded="false">
-            <p>
+{{/isdir}}
+        {{#isdir}}
+            <p>{{{icon}}}{{{name}}}</p>
+            {{#subdirs}}
                 {{>core/accessible_subtree}}
-            </p>
-        </li>
-    </ul>
-{{/hassubdirs}}
-
-{{>core/file_display}}
-{{#hassubdirs}}
-    <ul>
-        {{#subdirs}}
-            <li>
-                {{>core/file_subtree}}
-            </li>
-        {{/subdirs}}
-    </ul>
-{{/hassubdirs}}
+            {{/subdirs}}
+        {{/isdir}}
+        {{^isdir}}
+            <li role="treeitem">
+            {{$treeitem}}
+                <a href="{{url}}" tabindex="-1">{{{icon}}}{{{name}}}</a>
+            {{/treeitem}}
+        {{/isdir}}
+    </li>
+{{#isdir}}
+</ul>
+{{/isdir}}

@@ -1244,3 +1244,105 @@ body.path-mod-assign [data-region="grade-panel"] .mform .fitem.has-popout .felem
 .path-mod-assign .initialsdropdown::after {
     content: '';
 }
+
+/* Rule so that the table tree view works with word-wrap: break-word. */
+.core_accessible_tree .content table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.core_accessible_tree .content .footer {
+    padding: 10px 0 0;
+    margin-top: .5em;
+}
+
+.core_accessible_tree ul[role="tree"] {
+    margin: 0;
+    padding: 0;
+}
+.core_accessible_tree ul,
+.core_accessible_tree li {
+    list-style: none;
+}
+
+.core_accessible_tree [role="treeitem"] {
+    padding-left: 22px;
+    cursor: pointer;
+}
+
+.core_accessible_tree [role="treeitem"] p {
+    margin-bottom: 0;
+}
+
+.core_accessible_tree [role="treeitem"][aria-expanded] {
+    padding-left: 0;
+}
+
+.core_accessible_tree [role="treeitem"][aria-expanded="false"] > p {
+    /*rtl:remove*/
+    background-image: url('[[pix:t/collapsed]]');
+    /*rtl:raw:
+        background-image: url('[[pix:t/collapsed_rtl]]');
+    */
+    background-size: 16px 16px;
+    background-position: 1px 1px;
+    background-repeat: no-repeat;
+    padding-left: 22px;
+}
+
+.core_accessible_tree [role="treeitem"][aria-expanded="true"] > p {
+    background-image: url('[[pix:t/expanded]]');
+    background-size: 16px 16px;
+    background-position: 1px 1px;
+    background-repeat: no-repeat;
+    padding-left: 22px;
+}
+
+.core_accessible_tree [role="treeitem"]:not([aria-expanded]) {
+    background-image:
+            repeating-linear-gradient(
+                    to right,
+                    rgba(0, 0, 0, .5) 0,
+                    rgba(0, 0, 0, .5) 1px,
+                    rgba(255, 255, 255, 0) 1px,
+                    rgba(255, 255, 255, 0) 2px
+            ),
+            repeating-linear-gradient(
+                    to top,
+                    rgba(0, 0, 0, 0.5) 0,
+                    rgba(0, 0, 0, 0.5) 1px,
+                    rgba(255, 255, 255, 0) 1px,
+                    rgba(255, 255, 255, 0) 2px
+            );
+    background-repeat: no-repeat, no-repeat;
+    /*rtl:remove*/
+    background-position: left 10px top 50%, left 8px top 0;
+    /*rtl:raw:
+        background-position: right 10px top 50%, right 8px top 0;
+    */
+    background-size: 11px 1px, 1px 100%;
+}
+
+.core_accessible_tree [role="treeitem"]:not([aria-expanded]):last-child {
+    background-size: 11px 1px, 1px 50%;
+}
+
+.core_accessible_tree [role="group"] {
+    background-image:
+            repeating-linear-gradient(
+                    to top,
+                    rgba(0, 0, 0, 0.5) 0,
+                    rgba(0, 0, 0, 0.5) 1px,
+                    rgba(255, 255, 255, 0) 1px,
+                    rgba(255, 255, 255, 0) 2px
+            );
+    background-repeat: no-repeat;
+    background-position: left 8px top 100%;
+    background-size: 1px 100%;
+    padding-left: 22px;
+    margin-left: 0;
+}
+
+.core_accessible_tree [aria-hidden="true"]:not(.icon) {
+    display: none;
+}

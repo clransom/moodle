@@ -29,16 +29,17 @@
     {
         "id": file_tree1,
         "showexpanded": true,
-        "dir": [
+        "displayname": false,
+        "isroot": true,
+        "subdirs": [
             {
                 "name": "Folder",
                 "icon": "<img src='icon' alt='alt'>",
-                "hassubdirs": true,
+                "isdir": true,
                 "subdirs": [
                     {
                         "name": "File1",
                         "icon": "<img src='icon' alt='alt'>",
-                        "hassubdirs": false,
                         "subdirs": null
                      }
                 ]
@@ -46,38 +47,29 @@
             {
                 "name": "File2",
                 "icon": "<img src='icon' alt='alt'>",
-                "hassubdirs": false,
                 "subdirs": null
             }
         ]
     }
 }}
 
-<div class="core_accessible_tree">
+<div id="{{uniqid}}-filetree" class="core_accessible_tree">
     <ul role="tree" aria-label="{{treelabel}}">
-        <ul role="group" aria-hidden="true">
-
-        </ul>
-    </ul>
-    <div id="{{uniqid}}-filetree" class="filemanager">
-        {{#dir}}
+        {{#subdirs}}
             {{#displayroot}}
-                <ul>
-                    <li>
-                        {{>core/file_subtree}}
-                    </li>
-                </ul>
+                {{>core/accessible_subtree}}
             {{/displayroot}}
             {{^displayroot}}
-                {{>core/file_subtree}}
+                {{#subdirs}}
+                    {{>core/accessible_subtree}}
+                {{/subdirs}}
             {{/displayroot}}
-        {{/dir}}
-    </div>
+        {{/subdirs}}
+    </ul>
 </div>
 
 {{#js}}
-    // Init tree JS.
-    require(['core/file_tree'], function(Folder) {
-    Folder.initTree('{{uniqid}}-filetree', '{{{showexpanded}}}');
-    });
+require(['core/accessible_tree'], function(AccessibleTree) {
+    AccessibleTree.init('{{uniqid}}-filetree');
+});
 {{/js}}

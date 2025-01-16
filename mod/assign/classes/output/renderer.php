@@ -69,7 +69,7 @@ class renderer extends \plugin_renderer_base {
      */
     public function render_assign_files(\assign_files $tree) {
         $data = $tree->filetree->export_for_template($this->output);
-        $html = $this->render_from_template('core/file_tree', $data);
+        $html = $this->render_from_template('core/accessible_tree', $data);
 
         // todo: what is this? Does it look ok with the new changes?
         if ($tree->portfolioform) {
