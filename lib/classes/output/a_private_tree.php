@@ -86,7 +86,6 @@ class a_private_tree implements renderable, templatable {
 
         return [
             'showexpanded' => $this->showexpanded,
-            'displayname' => $this->displayroot,
             'content' => $elements,
             'treelabel' => s(get_string('privatefiles')),
         ];
@@ -124,7 +123,7 @@ class a_private_tree implements renderable, templatable {
                 'content' => $content,
                 'hascontent' => !empty($content),
                 'isdir' => true,
-                'displayname' => true,
+                'displayname' => !$isroot || $this->displayroot,
             ];
         }
         foreach ($dir['files'] as $file) {

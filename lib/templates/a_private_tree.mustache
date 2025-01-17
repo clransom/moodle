@@ -59,25 +59,25 @@
     <ul role="tree" aria-label="{{treelabel}}">
 {{/isroot}}
         <li role="treeitem" {{#isdir}}{{#hascontent}}aria-expanded="false"{{/hascontent}}{{/isdir}}>
-        {{^isroot}}
+        {{#displayname}}
             {{#isdir}}
                 <p>{{{icon}}}{{{name}}}</p>
             {{/isdir}}
             {{#hascontent}}
                 <ul role="group" aria-hidden="true">
             {{/hascontent}}
-        {{/isroot}}
+        {{/displayname}}
             {{#isdir}}
                 {{>core/a_private_tree}}
             {{/isdir}}
             {{^isdir}}
                 {{>core/accessible_treeitem}}
             {{/isdir}}
-        {{^isroot}}
+        {{#displayname}}
             {{#hascontent}}
                 </ul>
             {{/hascontent}}
-        {{/isroot}}
+        {{/displayname}}
         </li>
 {{#isroot}}
     </ul>
