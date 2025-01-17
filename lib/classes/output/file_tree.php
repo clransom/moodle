@@ -35,7 +35,7 @@ class file_tree implements renderable, templatable {
     private $showexpanded = true;
 
     /** @var bool Whether to display the root directory */
-    private $displayroot = true;
+    private $displayroot = false;
 
     /** @var array File display options */
     private array $options;
@@ -52,11 +52,10 @@ class file_tree implements renderable, templatable {
      * @param array $options File display options
      *
      */
-    public function __construct(int $cmid, string $component, string $filearea, int $itemid = 0, array $options = []) {
-        $this->cmid = $cmid;
+    public function __construct(array $filetree, int $cmid = 0, array $options = []) {
         $this->options = $options;
-        $fs = get_file_storage();
-        $this->directory = $fs->get_area_tree(\context_module::instance($cmid)->id, $component, $filearea, $itemid);
+        $this->cmid = $cmid;
+        $this->directory = $filetree;
     }
 
     /**
@@ -80,10 +79,12 @@ class file_tree implements renderable, templatable {
     }
 
     public function export_for_template(renderer_base $output) {
+        $elements = $this->get_tree_elements($output, ['files' => [], 'subdirs' => [$this->directory]], true);
+
         return [
             'showexpanded' => $this->showexpanded,
-            'displayroot' => $this->displayroot,
-            'dir' => $this->get_tree_elements($output, ['files' => [], 'subdirs' => [$this->directory]]),
+            'content' => $elements,
+            'treelabel' => s(get_string('privatefiles')),
         ];
     }
 
@@ -101,28 +102,31 @@ class file_tree implements renderable, templatable {
      * Internal function - Creates elements structure suitable for core/file_tree template.
      *
      * @param array $dir The subdir and files structure to convert into a tree.
-     * @return array The structure to be rendered by core/file_tree template.
+     * @return array The structure to be rendered by core/accessible_tree template.
      */
-    protected function get_tree_elements(renderer_base $output, array $dir): array {
+    protected function get_tree_elements(renderer_base $output, array $dir, bool $isroot): array {
         global $OUTPUT;
-        if (empty($dir['subdirs']) && empty($dir['files'])) {
+        if (empty($dir['subdirs']) and empty($dir['files'])) {
             return [];
         }
         $elements = [];
         foreach ($dir['subdirs'] as $subdir) {
-            $htmllize = $this->get_tree_elements($output, $subdir);
-            $image = $OUTPUT->pix_icon(file_folder_icon(), $subdir['dirname'], 'moodle');
+            $image = $OUTPUT->pix_icon(file_folder_icon(), '');
+            $content = $this->get_tree_elements($output, $subdir, false);
             $elements[] = [
                 'name' => $subdir['dirname'],
                 'icon' => $image,
-                'subdirs' => $htmllize,
-                'hassubdirs' => !empty($htmllize),
+                'isroot' => $isroot,
+                'content' => $content,
+                'hascontent' => !empty($content),
+                'isdir' => true,
+                'displayname' => !$isroot || $this->displayroot,
             ];
         }
         foreach ($dir['files'] as $file) {
             $data = [
-                'subdirs' => null,
-                'hassubdirs' => false,
+                'isdir' => false,
+                'displayname' => true,
             ];
             $filedisplay = new file_display($file, $this->cmid, $this->options);
             $elements[] = array_merge($data, $filedisplay->export_for_template($output));

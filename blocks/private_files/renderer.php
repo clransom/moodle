@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use core\output\a_private_tree;
+use core\output\file_tree;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -37,11 +37,11 @@ class block_private_files_renderer extends plugin_renderer_base {
         $context = context_user::instance($USER->id);
         $fs = get_file_storage();
         $filetree = $fs->get_area_tree($context->id, 'user', 'private', 0);
-        $tree = new a_private_tree($filetree);
+        $tree = new file_tree($filetree);
         $tree->show_expanded(false);
 
         $data = $tree->export_for_template($this);
-        return $this->render_from_template('core/a_private_tree', $data);
+        return $this->render_from_template('core/file_tree', $data);
     }
 
     public function render_private_files_tree(private_files_tree $tree) {

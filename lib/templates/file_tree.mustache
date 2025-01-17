@@ -29,16 +29,17 @@
     {
         "id": file_tree1,
         "showexpanded": true,
-        "dir": [
+        "displayname": false,
+        "isroot": true,
+        "subdirs": [
             {
                 "name": "Folder",
                 "icon": "<img src='icon' alt='alt'>",
-                "hassubdirs": true,
+                "isdir": true,
                 "subdirs": [
                     {
                         "name": "File1",
                         "icon": "<img src='icon' alt='alt'>",
-                        "hassubdirs": false,
                         "subdirs": null
                      }
                 ]
@@ -46,33 +47,48 @@
             {
                 "name": "File2",
                 "icon": "<img src='icon' alt='alt'>",
-                "hassubdirs": false,
                 "subdirs": null
             }
         ]
     }
 }}
 
-<div class="box generalbox pt-0 pb-3 foldertree">
-    <div id="{{uniqid}}-filetree" class="filemanager">
-        {{#dir}}
-            {{#displayroot}}
-                <ul>
-                    <li>
-                        {{>core/file_subtree}}
-                    </li>
-                </ul>
-            {{/displayroot}}
-            {{^displayroot}}
-                {{>core/file_subtree}}
-            {{/displayroot}}
-        {{/dir}}
-    </div>
+{{#isroot}}
+    <div id="{{uniqid}}-filetree" class="core_file_tree">
+    <ul role="tree" aria-label="{{treelabel}}">
+{{/isroot}}
+{{#content}}
+    {{#displayname}}
+    <li role="treeitem" {{#isdir}}{{#hascontent}}aria-expanded="false"{{/hascontent}}{{/isdir}}>
+        {{#isdir}}
+            <p>{{{icon}}}{{{name}}}</p>
+            {{#hascontent}}
+                <ul role="group" aria-hidden="true">
+            {{/hascontent}}
+        {{/isdir}}
+    {{/displayname}}
+        {{#isdir}}
+            {{>core/file_tree}}
+        {{/isdir}}
+        {{^isdir}}
+            {{>core/file_display}}
+        {{/isdir}}
+    {{#displayname}}
+        {{#isdir}}{{#hascontent}}
+            </ul>
+        {{/hascontent}}{{/isdir}}
+    </li>
+    {{/displayname}}
+{{/content}}
+{{#isroot}}
+    </ul>
 </div>
+{{/isroot}}
+
+
 
 {{#js}}
-    // Init tree JS.
-    require(['core/file_tree'], function(Folder) {
-        Folder.initTree('{{uniqid}}-filetree', '{{{showexpanded}}}');
-    });
+require(['core/file_tree'], function(FileTree) {
+    FileTree.init('{{uniqid}}-filetree');
+});
 {{/js}}
