@@ -29,13 +29,16 @@ class file_tree implements renderable, templatable {
     private int $cmid;
 
     /** @var array The directory to create a file tree from */
-    private $directory;
+    private array $directory;
+
+    /** @var string Label for the tree */
+    private string $label;
 
     /** @var bool Whether to display sub folders expanded */
-    private $showexpanded = true;
+    private bool $showexpanded = true;
 
     /** @var bool Whether to display the root directory */
-    private $displayroot = false;
+    private bool $displayroot = false;
 
     /** @var array File display options */
     private array $options;
@@ -52,10 +55,11 @@ class file_tree implements renderable, templatable {
      * @param array $options File display options
      *
      */
-    public function __construct(array $filetree, int $cmid = 0, array $options = []) {
+    public function __construct(array $filetree, string $label, int $cmid = 0, array $options = []) {
         $this->options = $options;
         $this->cmid = $cmid;
         $this->directory = $filetree;
+        $this->label = $label;
     }
 
     /**
@@ -84,7 +88,7 @@ class file_tree implements renderable, templatable {
         return [
             'showexpanded' => $this->showexpanded,
             'content' => $elements,
-            'treelabel' => s(get_string('privatefiles')),
+            'treelabel' => $this->label,
         ];
     }
 
@@ -102,7 +106,7 @@ class file_tree implements renderable, templatable {
      * Internal function - Creates elements structure suitable for core/file_tree template.
      *
      * @param array $dir The subdir and files structure to convert into a tree.
-     * @return array The structure to be rendered by core/accessible_tree template.
+     * @return array The structure to be rendered by core/file_tree template.
      */
     protected function get_tree_elements(renderer_base $output, array $dir, bool $isroot): array {
         global $OUTPUT;

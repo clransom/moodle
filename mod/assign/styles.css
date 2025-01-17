@@ -1246,39 +1246,39 @@ body.path-mod-assign [data-region="grade-panel"] .mform .fitem.has-popout .felem
 }
 
 /* Rule so that the table tree view works with word-wrap: break-word. */
-.core_accessible_tree .content table {
+.core_file_tree .content table {
     table-layout: fixed;
     width: 100%;
 }
 
-.core_accessible_tree .content .footer {
+.core_file_tree .content .footer {
     padding: 10px 0 0;
     margin-top: .5em;
 }
 
-.core_accessible_tree ul[role="tree"] {
+.core_file_tree ul[role="tree"] {
     margin: 0;
     padding: 0;
 }
-.core_accessible_tree ul,
-.core_accessible_tree li {
+.core_file_tree ul,
+.core_file_tree li {
     list-style: none;
 }
 
-.core_accessible_tree [role="treeitem"] {
+.core_file_tree [role="treeitem"] {
     padding-left: 22px;
     cursor: pointer;
 }
 
-.core_accessible_tree [role="treeitem"] p {
+.core_file_tree [role="treeitem"] p {
     margin-bottom: 0;
 }
 
-.core_accessible_tree [role="treeitem"][aria-expanded] {
+.core_file_tree [role="treeitem"][aria-expanded] {
     padding-left: 0;
 }
 
-.core_accessible_tree [role="treeitem"][aria-expanded="false"] > p {
+.core_file_tree [role="treeitem"][aria-expanded="false"] > p {
     /*rtl:remove*/
     background-image: url('[[pix:t/collapsed]]');
     /*rtl:raw:
@@ -1290,7 +1290,7 @@ body.path-mod-assign [data-region="grade-panel"] .mform .fitem.has-popout .felem
     padding-left: 22px;
 }
 
-.core_accessible_tree [role="treeitem"][aria-expanded="true"] > p {
+.core_file_tree [role="treeitem"][aria-expanded="true"] > p {
     background-image: url('[[pix:t/expanded]]');
     background-size: 16px 16px;
     background-position: 1px 1px;
@@ -1298,7 +1298,7 @@ body.path-mod-assign [data-region="grade-panel"] .mform .fitem.has-popout .felem
     padding-left: 22px;
 }
 
-.core_accessible_tree [role="treeitem"]:not([aria-expanded]) {
+.core_file_tree [role="treeitem"]:not([aria-expanded]) {
     background-image:
             repeating-linear-gradient(
                     to right,
@@ -1323,11 +1323,11 @@ body.path-mod-assign [data-region="grade-panel"] .mform .fitem.has-popout .felem
     background-size: 11px 1px, 1px 100%;
 }
 
-.core_accessible_tree [role="treeitem"]:not([aria-expanded]):last-child {
+.core_file_tree [role="treeitem"]:not([aria-expanded]):last-child {
     background-size: 11px 1px, 1px 50%;
 }
 
-.core_accessible_tree [role="group"] {
+.core_file_tree [role="group"] {
     background-image:
             repeating-linear-gradient(
                     to top,
@@ -1343,6 +1343,6 @@ body.path-mod-assign [data-region="grade-panel"] .mform .fitem.has-popout .felem
     margin-left: 0;
 }
 
-.core_accessible_tree [aria-hidden="true"]:not(.icon) {
+.core_file_tree [aria-hidden="true"]:not(.icon) {
     display: none;
 }

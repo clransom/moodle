@@ -37,7 +37,7 @@ class block_private_files_renderer extends plugin_renderer_base {
         $context = context_user::instance($USER->id);
         $fs = get_file_storage();
         $filetree = $fs->get_area_tree($context->id, 'user', 'private', 0);
-        $tree = new file_tree($filetree);
+        $tree = new file_tree($filetree, s(get_string('privatefiles')));
         $tree->show_expanded(false);
 
         $data = $tree->export_for_template($this);

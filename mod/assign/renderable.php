@@ -681,7 +681,7 @@ class assign_course_index_summary implements renderable {
 class assign_files implements renderable {
     /** @var context $context */
     public $context;
-    /** @var string $context */
+    /** @var array $dir */
     public $dir;
     /** @var MoodleQuickForm $portfolioform */
     public $portfolioform;
@@ -689,7 +689,7 @@ class assign_files implements renderable {
     public $cm;
     /** @var stdClass $course */
     public $course;
-    /** @var \core\output\accessible_tree $filetree */
+    /** @var \core\output\file_tree $filetree */
     public $filetree;
 
     /**
@@ -747,8 +747,7 @@ class assign_files implements renderable {
             }
         }
 
-        $this->filetree = new \core\output\accessible_tree($cm->id, $component, $filearea, $sid, $fileoptions);
-        $this->filetree->display_root(false);
+        $this->filetree = new \core\output\file_tree($this->dir, 'assign tree', $cm->id, $fileoptions);
     }
 
     /**
