@@ -52,13 +52,8 @@ class file_display implements renderable, templatable {
         $filenamedisplay = clean_filename($filename);
 
         $url = \moodle_url::make_pluginfile_url($this->file->get_contextid(), $this->file->get_component(),
-            $this->file->get_filearea(), $this->file->get_itemid(), $this->file->get_filepath(), $filename, false);
-        if (file_extension_in_typegroup($filename, 'web_image')) {
-            $image = $url->out(false, ['preview' => 'tinyicon', 'oid' => $this->file->get_timemodified()]);
-            $image = html_writer::empty_tag('img', ['src' => $image]);
-        } else {
-            $image = $output->pix_icon(file_file_icon($this->file), $filenamedisplay, 'moodle');
-        }
+            $this->file->get_filearea(), $this->file->get_itemid(), $this->file->get_filepath(), $filename);
+        $image = $output->pix_icon(file_file_icon($this->file), '');
 
         if (!empty($this->options['forcedownload'])) {
             $url->param('forcedownload', 1);

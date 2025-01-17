@@ -52,9 +52,8 @@
         ]
     }
 }}
-
 {{#isroot}}
-    <div id="{{uniqid}}-filetree" class="core_file_tree">
+<div id="{{uniqid}}-filetree" class="core_file_tree">
     <ul role="tree" aria-label="{{treelabel}}">
 {{/isroot}}
 {{#content}}
@@ -85,10 +84,8 @@
 </div>
 {{/isroot}}
 
-
-
-{{#js}}
+{{#js}}{{#isroot}}
 require(['core/file_tree'], function(FileTree) {
-    FileTree.init('{{uniqid}}-filetree');
+    const tree = FileTree.init('{{uniqid}}-filetree', {{showexpanded}});
 });
-{{/js}}
+{{/isroot}}{{/js}}

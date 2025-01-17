@@ -86,7 +86,6 @@ class file_tree implements renderable, templatable {
         $elements = $this->get_tree_elements($output, ['files' => [], 'subdirs' => [$this->directory]], true);
 
         return [
-            'showexpanded' => $this->showexpanded,
             'content' => $elements,
             'treelabel' => $this->label,
         ];
@@ -125,6 +124,7 @@ class file_tree implements renderable, templatable {
                 'hascontent' => !empty($content),
                 'isdir' => true,
                 'displayname' => !$isroot || $this->displayroot,
+                'showexpanded' => $isroot || $this->showexpanded,
             ];
         }
         foreach ($dir['files'] as $file) {
