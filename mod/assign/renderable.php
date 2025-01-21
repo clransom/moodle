@@ -719,6 +719,13 @@ class assign_files implements renderable {
                 'modifiedtime' => true,
                 'plagiarismlinks' => !empty($CFG->enableplagiarism),
             ];
+
+            if (!empty($CFG->enableplagiarism)) {
+                $fileoptions['plagiarismlinks'] = [
+                    'cmid' => $cm->id,
+                    'course' => $course,
+                ];
+            }
         }
 
         $files = $fs->get_area_files($this->context->id,
@@ -743,11 +750,19 @@ class assign_files implements renderable {
                 $button->reset_formats();
                 $this->portfolioform = $button->to_html(PORTFOLIO_ADD_TEXT_LINK);
 
-                $fileoptions['portfoliobutton'] = true;
+                $portfolioparams = [
+                    'cmid' => $cm->id,
+                ];
+                $fileoptions['portfoliobutton'] = [
+                    'class' => 'assign_portfolio_caller',
+                    'params' => $portfolioparams,
+                    'component' => 'mod_assign',
+                ];
             }
         }
 
-        $this->filetree = new \core\output\file_tree($this->dir, 'assign tree', $cm->id, $fileoptions);
+        $this->filetree = new \core\output\file_tree($this->dir, get_string('filesubmissions', 'assign'), $fileoptions);
+        $this->filetree->expand_all_folders(true);
     }
 
     /**

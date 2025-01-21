@@ -25,9 +25,6 @@ namespace core\output;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class file_tree implements renderable, templatable {
-    /** @var int Course module ID */
-    private int $cmid;
-
     /** @var array The directory to create a file tree from */
     private array $directory;
 
@@ -35,7 +32,7 @@ class file_tree implements renderable, templatable {
     private string $label;
 
     /** @var bool Whether to display sub folders expanded */
-    private bool $showexpanded = true;
+    private bool $expandfolders = false;
 
     /** @var bool Whether to display the root directory */
     private bool $displayroot = false;
@@ -43,21 +40,15 @@ class file_tree implements renderable, templatable {
     /** @var array File display options */
     private array $options;
 
-    //Todo: can specify more than one file area?
-
     /**
      * Constructor.
      *
-     * @param int $cmid course module ID
-     * @param string $component component
-     * @param string $filearea file area
-     * @param int $itemid item ID
+     * @param array $filetree The file tree to work with (e.g. output of {@see file_storage::get_area_tree()})
+     * @param string $label Aria label for the tree
      * @param array $options File display options
-     *
      */
-    public function __construct(array $filetree, string $label, int $cmid = 0, array $options = []) {
+    public function __construct(array $filetree, string $label, array $options = []) {
         $this->options = $options;
-        $this->cmid = $cmid;
         $this->directory = $filetree;
         $this->label = $label;
     }
@@ -68,8 +59,8 @@ class file_tree implements renderable, templatable {
      * @param bool $value
      * @return void
      */
-    public function show_expanded(bool $value): void {
-        $this->showexpanded = $value;
+    public function expand_all_folders(bool $value): void {
+        $this->expandfolders = $value;
     }
 
     /**
@@ -124,7 +115,7 @@ class file_tree implements renderable, templatable {
                 'hascontent' => !empty($content),
                 'isdir' => true,
                 'displayname' => !$isroot || $this->displayroot,
-                'showexpanded' => $isroot || $this->showexpanded,
+                'showexpanded' => $isroot || $this->expandfolders,
             ];
         }
         foreach ($dir['files'] as $file) {
@@ -132,7 +123,7 @@ class file_tree implements renderable, templatable {
                 'isdir' => false,
                 'displayname' => true,
             ];
-            $filedisplay = new file_display($file, $this->cmid, $this->options);
+            $filedisplay = new file_display($file, $this->options);
             $elements[] = array_merge($data, $filedisplay->export_for_template($output));
         }
 

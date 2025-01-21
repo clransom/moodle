@@ -28,9 +28,6 @@ class file_display implements renderable, templatable {
     /** @var \stored_file File to display */
     private \stored_file $file;
 
-    /** @var int Course module ID */
-    private int $cmid;
-
     /** @var array File display options */
     private array $options;
 
@@ -38,16 +35,15 @@ class file_display implements renderable, templatable {
      * Constructor.
      *
      * @param \stored_file $file File
-     * @param int $cmid Course module ID
      * @param array $options File display options
      */
-    public function __construct(\stored_file $file, int $cmid, array $options) {
+    public function __construct(\stored_file $file, array $options) {
         $this->file = $file;
-        $this->cmid = $cmid;
         $this->options = $options;
     }
 
-    public function export_for_template(renderer_base $output) {
+    #[\Override]
+    public function export_for_template(renderer_base $output): array {
         $filename = $this->file->get_filename();
         $filenamedisplay = clean_filename($filename);
 
@@ -66,11 +62,17 @@ class file_display implements renderable, templatable {
         ];
 
         if (!empty($this->options['portfoliobutton'])) {
-            $data['portfoliobutton'] = $this->get_portfolio_button();
+            $portfolioopts = $this->options['portfoliobutton'];
+            $data['portfoliobutton'] = $this->get_portfolio_button($portfolioopts['class'], $portfolioopts['params'],
+                $portfolioopts['component']);
         }
 
         if (!empty($this->options['plagiarismlinks'])) {
-            $data['plagiarismlinks'] = $this->get_plagiarism_links();
+            $data['plagiarismlinks'] = $this->get_plagiarism_links($this->options['plagiarismlinks']);
+        }
+
+        if (!empty($this->options['filesize'])) {
+            $data['filesize'] = display_size($this->file->get_filesize());
         }
 
         if (!empty($this->options['modifiedtime'])) {
@@ -83,22 +85,21 @@ class file_display implements renderable, templatable {
     /**
      * Get the portfolio button content for this file.
      *
+     * @param string $class Name of the portfolio caller class to use
+     * @param array $params Arguments to pass to the portfolio caller callback functions
+     * @param string $component This is the name of the component in Moodle, eg 'mod_forum'
      * @return string portfolio button HTML
      */
-    protected function get_portfolio_button(): string {
+    protected function get_portfolio_button(string $class, array $params, string $component): string {
         global $CFG;
         if (empty($CFG->enableportfolios)) {
             return '';
         }
-
         require_once($CFG->libdir . '/portfoliolib.php');
 
         $button = new \portfolio_add_button();
-        $portfolioparams = [
-            'cmid' => $this->cmid,
-            'fileid' => $this->file->get_id(),
-        ];
-        $button->set_callback_options('assign_portfolio_caller', $portfolioparams, 'mod_assign');
+        $portfolioparams = array_merge(['fileid' => $this->file->get_id()], $params);
+        $button->set_callback_options($class, $portfolioparams, $component);
         $button->set_format_by_file($this->file);
 
         return (string) $button->to_html(PORTFOLIO_ADD_ICON_LINK);
@@ -107,23 +108,22 @@ class file_display implements renderable, templatable {
     /**
      * Get the plagiarism links for this file.
      *
-     * @return string plagiarism links HTML
+     * @param array $linkarray All relevant information for the plugin to generate a link
+     * @return string url to allow login/viewing of a similarity report, or empty string if plagiarism plugins are not enabled
      */
-    protected function get_plagiarism_links(): string {
+    protected function get_plagiarism_links(array $linkarray): string {
         global $CFG;
         if ($CFG->enableplagiarism) {
             require_once($CFG->libdir.'/plagiarismlib.php');
-            [$course, $cm] = get_course_and_cm_from_cmid($this->cmid);
-            $plagiarismlinks = plagiarism_get_links([
-                'userid' => $this->file->get_userid(),
-                'file' => $this->file,
-                'cmid' => $this->cmid,
-                'course' => $course]);
+            $linkarray['file'] = $this->file;
+            if (!array_key_exists('userid', $linkarray)) {
+                $linkarray['userid'] = $this->file->get_userid();
+            }
+            $plagiarismlinks = plagiarism_get_links($linkarray);
         } else {
             $plagiarismlinks = '';
         }
 
         return $plagiarismlinks;
     }
-
 }

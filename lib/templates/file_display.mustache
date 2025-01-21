@@ -35,6 +35,9 @@
 
 <div class="core_file_display">
     <a href="{{url}}">{{{icon}}}{{{name}}}</a>
+    {{#filesize}}
+        <span class="filedisplay-size">{{filesize}}</span>
+    {{/filesize}}
     {{{plagiarismlinks}}}
     {{{portfoliobutton}}}
     {{#modifiedtime}}
