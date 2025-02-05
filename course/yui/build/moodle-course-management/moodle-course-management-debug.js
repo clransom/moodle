@@ -1306,7 +1306,23 @@ Category.prototype = {
                 break;
             case 'hide':
                 e.preventDefault();
-                this.get('console').performAjaxAction('hidecategory', catarg, this.hide, this);
+                var coursecount = this.get('node').getData('course-count');
+                if (coursecount === '0') {
+                    this.get('console').performAjaxAction('hidecategory', catarg, this.hide, this);
+                    break;
+                }
+                require(['core/notification', 'core/str'], function(Notification, Str) {
+                    Notification.saveCancelPromise(
+                        Str.get_string('warning'),
+                        Str.get_string('hidecategorywarning', 'core', coursecount),
+                        Str.get_string('hide')
+                    ).then(function() {
+                        this.get('console').performAjaxAction('hidecategory', catarg, this.hide, this);
+                    }.bind(this)
+                    ).catch(function() {
+                        // User cancelled, no action needed.
+                    });
+                }.bind(this));
                 break;
             case 'expand':
                 e.preventDefault();
