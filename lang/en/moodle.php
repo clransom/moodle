@@ -1040,6 +1040,7 @@ $string['hiddensectionsinvisible'] = 'Hidden sections are completely invisible';
 $string['hiddenwithbrackets'] = '(hidden)';
 $string['hide'] = 'Hide';
 $string['hideadvancedsettings'] = 'Hide advanced settings';
+$string['hidecategorywarning'] = 'This category contains {$a} course(s). If you hide it, users who do not have permission to see hidden categories will be unable to access these courses.';
 $string['hidechartdata'] = 'Hide chart data';
 $string['hidefromstudents'] = 'Hide on course page';
 $string['hideoncoursepage'] = 'Make available but don\'t show on course page';
